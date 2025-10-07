@@ -143,8 +143,6 @@ test('parse()', function (t) {
         st.end();
     });
 
-    t.deepEqual(qs.parse('a[b]=c&a=d'), { a: { b: 'c', d: true } }, 'can add keys to objects');
-
     t.test('correctly prunes undefined values when converting an array to an object', function (st) {
         st.deepEqual(qs.parse('a[2]=b&a[99999999]=c'), { a: { '2': 'b', '99999999': 'c' } });
         st.end();
@@ -408,7 +406,45 @@ test('parse()', function (t) {
         st.end();
     });
 
-    t.test('can return plain objects', function (st) {
+    t.test('params starting with a starting bracket', function (st) {
+        st.deepEqual(qs.parse('[=toString'), {});
+        st.end();
+    });
+
+    t.test('params starting with a starting bracket', function (st) {
+        st.deepEqual(qs.parse('[=toString'), {});
+        st.end();
+    });
+
+    t.test('add keys to objects', function (st) {
+        st.deepEqual(
+            qs.parse('a[b]=c&a=d'),
+            { a: { b: 'c', d: true } },
+            'can add keys to objects'
+        );
+
+        st.deepEqual(
+            qs.parse('a[b]=c&a=toString'),
+            { a: { b: 'c' } },
+            'can not overwrite prototype'
+        );
+
+        st.deepEqual(
+            qs.parse('a[b]=c&a=toString', { allowPrototypes: true }),
+            { a: { b: 'c', toString: true } },
+            'can overwrite prototype with allowPrototypes true'
+        );
+
+        st.deepEqual(
+            qs.parse('a[b]=c&a=toString', { plainObjects: true }),
+            { a: { b: 'c', toString: true } },
+            'can overwrite prototype with plainObjects true'
+        );
+
+        st.end();
+    });
+
+    t.test('can return null objects', { skip: !Object.create }, function (st) {
         var expected = Object.create(null);
         expected.a = Object.create(null);
         expected.a.b = 'c';
@@ -420,6 +456,66 @@ test('parse()', function (t) {
         expectedArray.a['0'] = 'b';
         expectedArray.a.c = 'd';
         st.deepEqual(qs.parse('a[]=b&a[c]=d', { plainObjects: true }), expectedArray);
+        st.end();
+    });
+
+    t.test('dunder proto is ignored', function (st) {
+        var payload = 'categories[__proto__]=login&categories[__proto__]&categories[length]=42';
+        var result = qs.parse(payload, { allowPrototypes: true });
+
+        st.deepEqual(
+            result,
+            {
+                categories: {
+                    length: '42'
+                }
+            },
+            'silent [[Prototype]] payload'
+        );
+
+        var plainResult = qs.parse(payload, { allowPrototypes: true, plainObjects: true });
+
+        st.deepEqual(
+            plainResult,
+            {
+                __proto__: null,
+                categories: {
+                    __proto__: null,
+                    length: '42'
+                }
+            },
+            'silent [[Prototype]] payload: plain objects'
+        );
+
+        var query = qs.parse('categories[__proto__]=cats&categories[__proto__]=dogs&categories[some][json]=toInject', { allowPrototypes: true });
+
+        st.notOk(Array.isArray(query.categories), 'is not an array');
+        st.notOk(query.categories instanceof Array, 'is not instanceof an array');
+        st.deepEqual(query.categories, { some: { json: 'toInject' } });
+        st.equal(JSON.stringify(query.categories), '{\"some\":{\"json\":\"toInject\"}}', 'stringifies as a non-array');
+
+        st.deepEqual(
+            qs.parse('foo[__proto__][hidden]=value&foo[bar]=stuffs', { allowPrototypes: true }),
+            {
+                foo: {
+                    bar: 'stuffs'
+                }
+            },
+            'hidden values'
+        );
+
+        st.deepEqual(
+            qs.parse('foo[__proto__][hidden]=value&foo[bar]=stuffs', { allowPrototypes: true, plainObjects: true }),
+            {
+                __proto__: null,
+                foo: {
+                    __proto__: null,
+                    bar: 'stuffs'
+                }
+            },
+            'hidden values: plain objects'
+        );
+
         st.end();
     });
 
