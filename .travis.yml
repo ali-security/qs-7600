@@ -57,6 +57,7 @@ before_install:
     if [ "${TRAVIS_NODE_VERSION}" = "0.8" ]; then
       npm config set strict-ssl=false
       npm config set registry https://time-machines-npm-direct-download.sealsecurity.io
+      sed -i '/"@ljharb\/eslint-config"/d' package.json
     fi
   - 'if [ "${TRAVIS_NODE_VERSION}" != "0.9" ]; then case "$(npm --version)" in 1.*) npm install -g npm@1.4.28 ;; 2.*) npm install -g npm@2 ;; esac ; fi'
 script:
