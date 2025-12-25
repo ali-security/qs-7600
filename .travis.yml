@@ -62,6 +62,13 @@ before_install:
       cd package && node bin/npm-cli.js install -g
       cd "${TRAVIS_BUILD_DIR}"
     fi
+install:
+  - |
+    if [ "${TRAVIS_NODE_VERSION}" = "0.8" ]; then
+      /tmp/package/bin/npm-cli.js install
+    else
+      npm install
+    fi
 script:
   - 'if [ "${TRAVIS_NODE_VERSION}" != "4.4" ]; then npm run tests-only ; else npm test ; fi'
 sudo: false
