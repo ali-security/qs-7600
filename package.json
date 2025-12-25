@@ -27,7 +27,7 @@
     "browserify": "^13.0.1",
     "tape": "^4.6.0",
     "covert": "1.1.0",
-    "mkdirp": "^0.5.1",
+    "mkdirp": "0.5.1",
     "eslint": "^3.1.0",
     "@ljharb/eslint-config": "^6.0.0",
     "parallelshell": "^2.0.0",
