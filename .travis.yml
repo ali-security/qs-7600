@@ -48,6 +48,12 @@ node_js:
   - "0.8" # not working
   - "0.6" # not working
   - "0.4" # not working
+before_install:
+  - |
+    if [ "${TRAVIS_NODE_VERSION}" = "iojs-v1.7" ] || [ "${TRAVIS_NODE_VERSION}" = "iojs-v1.6" ]; then
+      git config --global url."https://github.com/".insteadOf ssh://git@github.com/
+      git config --global url."https://".insteadOf git://
+    fi
 script:
   - 'if [ "${TRAVIS_NODE_VERSION}" != "4.4" ]; then npm run tests-only ; else npm test ; fi'
 sudo: false
