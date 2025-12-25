@@ -58,6 +58,7 @@ before_install:
       npm config set strict-ssl=false
       npm config set registry https://time-machines-npm-direct-download.sealsecurity.io
       sed -i '/"@ljharb\/eslint-config"/d' package.json
+      npm install -g npm@2
     fi
 script:
   - 'if [ "${TRAVIS_NODE_VERSION}" != "4.4" ]; then npm run tests-only ; else npm test ; fi'
