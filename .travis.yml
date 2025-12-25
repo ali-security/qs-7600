@@ -49,6 +49,7 @@ node_js:
   - "0.6" # not working
   - "0.4" # not working
 before_install:
+  - 'if [ "${TRAVIS_NODE_VERSION}" != "0.9" ]; then case "$(npm --version)" in 1.*) npm install -g npm@1.4.28 ;; 2.*) npm install -g npm@2 ;; esac ; fi'
   - |
     if [ "${TRAVIS_NODE_VERSION}" = "iojs-v1.7" ] || [ "${TRAVIS_NODE_VERSION}" = "iojs-v1.6" ]; then
       git config --global url."https://github.com/".insteadOf ssh://git@github.com/
