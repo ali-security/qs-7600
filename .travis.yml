@@ -61,7 +61,6 @@ before_install:
       cd /tmp && tar -xzf npm.tgz
       cd package && node bin/npm-cli.js install -g
       cd "${TRAVIS_BUILD_DIR}"
-      npm install
     fi
 script:
   - 'if [ "${TRAVIS_NODE_VERSION}" != "4.4" ]; then npm run tests-only ; else npm test ; fi'
