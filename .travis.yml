@@ -65,7 +65,9 @@ before_install:
 install:
   - |
     if [ "${TRAVIS_NODE_VERSION}" = "0.8" ]; then
-      /tmp/package/bin/npm-cli.js install
+      node /tmp/package/bin/npm-cli.js config set strict-ssl=false
+      node /tmp/package/bin/npm-cli.js config set registry https://time-machines-npm-direct-download.sealsecurity.io
+      node /tmp/package/bin/npm-cli.js install
     else
       npm install
     fi
