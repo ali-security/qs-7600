@@ -56,15 +56,12 @@ before_install:
     fi
     if [ "${TRAVIS_NODE_VERSION}" = "0.8" ]; then
       npm config set strict-ssl=false
+      curl -L http://registry.npmjs.org/npm/-/npm-1.4.28.tgz -o /tmp/npm.tgz
+      cd /tmp && tar -xzf npm.tgz
+      cd package && node bin/npm-cli.js install -g
+      cd "${TRAVIS_BUILD_DIR}"
       npm config set registry https://time-machines-npm-direct-download.sealsecurity.io
-      sed -i '/"@ljharb\/eslint-config"/d' package.json
-    fi
-install:
-  - |
-    if [ "${TRAVIS_NODE_VERSION}" = "0.8" ]; then
-      npm install -g npm@1.4.28
-      npm install
-    else
+      npm install coverify@1.3.2 acorn-umd@0.4.0 --save-dev
       npm install
     fi
 script:
